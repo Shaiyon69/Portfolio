@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="icon" href="frontend/images/pao.jpg">
+    <link rel="icon" type="icon" href="frontend/images/pao.jpg">
     <title>Shaiyon's Portfolio</title>
     <link rel="stylesheet" href="frontend/css/style.css">
 </head>
-<section>
-    
+<body>
     <!-- Navigation -->
     <nav class="nav">
         <div class="nav-logo">SHA</div>
         <div class="nav-links">
             <a href="#about" class="nav-link">About</a>
             <a href="#projects" class="nav-link">Projects</a>
+            <a href="frontend/components/devlogs.html" class="nav-link">Dev Logs</a>
             <a href="#contact" class="nav-link">Contact</a>
             <a href="#support" class="nav-link">Support</a>
         </div>
@@ -43,13 +43,13 @@
             <!-- Project 1 -->
             <div class="project-card">
                 <div class="project-image-container">
-                    <img src="frontend/images/task.svg" alt="Task Management System" class="project-image">
+                    <img src="frontend/images/task.svg" alt="Accounting Automation" class="project-image">
                 </div>
                 <div class="project-content">
-                    <h3>Task Management System</h3>
-                    <p><i>A simple task management system that allows you to add, edit, and delete tasks.</i></p>
+                    <h3>Accounting Automation</h3>
+                    <p><i>An automated accounting system designed to streamline financial processes and improve efficiency.</i></p>
                     <div class="button-container">
-                        <a href="https://github.com/Shaiyon69/Finals" class="btn" target="_blank">View Project</a>
+                        <a href="https://github.com/Shaiyon69/Accounting-Automation" class="btn" target="_blank">View Project</a>
                     </div>
                 </div>
             </div>
@@ -57,13 +57,13 @@
             <!-- Project 2 -->
             <div class="project-card">
                 <div class="project-image-container">
-                    <img src="frontend/images/arch.svg" alt="Arch Linux Setup" class="project-image">
+                    <img src="frontend/images/task.svg" alt="Task Management System" class="project-image">
                 </div>
                 <div class="project-content">
-                    <h3>Arch Linux</h3>
-                    <p><i>My Arch Linux setup and configuration.</i></p>
+                    <h3>Task Management System</h3>
+                    <p><i>A simple yet powerful task management system that allows you to add, edit, and delete tasks with ease.</i></p>
                     <div class="button-container">
-                        <a href="https://github.com/Shaiyon69/ArchLinux" class="btn" target="_blank">View Project</a>
+                        <a href="https://github.com/Shaiyon69/Finals" class="btn" target="_blank">View Project</a>
                     </div>
                 </div>
             </div>
@@ -71,13 +71,27 @@
             <!-- Project 3 -->  
             <div class="project-card">
                 <div class="project-image-container">
-                    <img src="frontend/images/pao.jpg" alt="Integrative Programming Project" class="project-image">
+                    <img src="frontend/images/pao.jpg" alt="ISUVentra" class="project-image">
                 </div>
                 <div class="project-content">
                     <h3>ISUVentra</h3>
-                    <p><i>Possible capstone project.</i></p>
+                    <p><i>An event and attendance tracking system designed to manage registrations and track attendance efficiently.</i></p>
                     <div class="button-container">
                         <a href="https://github.com/Shaiyon69/IsuVentra-Main" class="btn" target="_blank">View Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 4 -->
+            <div class="project-card">
+                <div class="project-image-container">
+                    <img src="frontend/images/arch.svg" alt="Arch Linux Setup" class="project-image">
+                </div>
+                <div class="project-content">
+                    <h3>Arch Linux</h3>
+                    <p><i>My Arch Linux setup and configuration with custom dotfiles and development tools.</i></p>
+                    <div class="button-container">
+                        <a href="https://github.com/Shaiyon69/ArchLinux" class="btn" target="_blank">View Project</a>
                     </div>
                 </div>
             </div>
@@ -89,6 +103,21 @@
                 <div class="box" id="box2"><img src="frontend/images/arch.svg" alt="Project Image" class="project-image-box"></div>  
                 <div class="box" id="box3">3</div>
             </div>
+    </section>
+
+    <!-- Recent Dev Logs Section -->
+    <section class="devlogs-section">
+        <div class="devlogs-preview">
+            <h2 class="section-title">Recent Dev Logs</h2>
+            <p class="section-subtitle">Latest updates from my development journey</p>
+            <hr class="section-divider">
+            
+            <div id="recentPostsContainer" class="recent-posts-container"></div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="frontend/components/devlogs.html" class="btn">View All Dev Logs</a>
+            </div>
+        </div>
     </section>
 
     <!-- Contact Section -->
@@ -121,5 +150,41 @@
         </div>
     </footer>
 
+    <script>
+        // Load recent blog posts on homepage
+        fetch('frontend/data/posts.json')
+            .then(response => response.json())
+            .then(data => {
+                const recentPostsContainer = document.getElementById('recentPostsContainer');
+                
+                if (data.posts.length === 0) {
+                    recentPostsContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: #808080;"><p>No posts yet. Check back soon!</p></div>';
+                    return;
+                }
+                
+                // Display only the first 3 recent posts
+                const recentPosts = data.posts.slice(0, 3);
+                
+                recentPostsContainer.innerHTML = recentPosts.map(post => `
+                    <div class="recent-post-card">
+                        <h3>${post.title}</h3>
+                        <div class="recent-post-meta">
+                            <span>📅 ${post.date}</span>
+                            <span>✍️ By ${post.author}</span>
+                            <span>⏱️ ${post.readingTime}</span>
+                        </div>
+                        <p>${post.excerpt}</p>
+                        <div class="recent-post-tags">
+                            ${post.tags.map(tag => `<span class="blog-tag">${tag}</span>`).join('')}
+                        </div>
+                        <a href="frontend/components/blog-post.html?id=${post.id}">Read Full Post →</a>
+                    </div>
+                `).join('');
+            })
+            .catch(error => {
+                console.error('Error loading posts:', error);
+                document.getElementById('recentPostsContainer').innerHTML = '<div style="text-align: center; padding: 2rem; color: #808080;"><p>Unable to load posts.</p></div>';
+            });
+    </script>
 </body>
 </html>

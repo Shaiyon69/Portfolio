@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="icon" href="../images/pao.jpg">
+    <title>Development Blog - Shaiyon's Portfolio</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-logo">SHA</div>
+        <div class="nav-links">
+            <a href="/index.html" class="nav-link">Home</a>
+            <a href="/index.html#about" class="nav-link">About</a>
+            <a href="/index.html#projects" class="nav-link">Projects</a>
+            <a href="/frontend/components/devlogs.html" class="nav-link">Dev Logs</a>
+            <a href="/index.html#contact" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Blog Header -->
+    <section class="blog-header">
+        <h1 class="blog-title">Development Blog</h1>
+        <p class="blog-subtitle">A chronicle of my development journey, projects, and learning experiences</p>
+    </section>
+
+    <!-- Blog Posts Container -->
+    <section class="blog-container">
+        <div class="blog-posts" id="postsContainer">
+            <!-- Posts will load here -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="copyright">&copy; 2026 Shaiyon. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Load blog posts from JSON
+        fetch('../data/posts.json')
+            .then(response => response.json())
+            .then(data => {
+                const postsContainer = document.getElementById('postsContainer');
+                
+                if (data.posts.length === 0) {
+                    postsContainer.innerHTML = '<div style="text-align: center; padding: 4rem 2rem; color: #808080;"><p style="font-size: 1.2rem;">No posts yet. Check back soon!</p></div>';
+                    return;
+                }
+                
+                postsContainer.innerHTML = data.posts.map(post => `
+                    <article class="blog-post">
+                        <div class="post-header">
+                            <h2 class="post-title">${post.title}</h2>
+                            <div class="post-meta">
+                                <span class="post-date">${post.date}</span>
+                                <span class="post-author">By ${post.author}</span>
+                                <span class="post-reading-time">${post.readingTime}</span>
+                            </div>
+                        </div>
+                        <p class="post-excerpt">${post.excerpt}</p>
+                        <div class="post-tags">
+                            ${post.tags.map(tag => `<span class="blog-tag">${tag}</span>`).join('')}
+                        </div>
+                        <a href="blog-post.html?id=${post.id}" class="read-more">Read Full Post →</a>
+                    </article>
+                `).join('');
+            })
+            .catch(error => {
+                console.error('Error loading posts:', error);
+                document.getElementById('postsContainer').innerHTML = '<div style="text-align: center; padding: 4rem 2rem; color: #808080;"><p>Unable to load posts.</p></div>';
+            });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
