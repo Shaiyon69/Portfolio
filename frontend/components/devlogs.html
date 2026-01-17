@@ -12,11 +12,13 @@
     <nav class="nav">
         <div class="nav-logo">SHA</div>
         <div class="nav-links">
-            <a href="/index.html" class="nav-link">Home</a>
-            <a href="/index.html#about" class="nav-link">About</a>
-            <a href="/index.html#projects" class="nav-link">Projects</a>
-            <a href="/frontend/components/devlogs.html" class="nav-link">Dev Logs</a>
-            <a href="/index.html#contact" class="nav-link">Contact</a>
+            <a href="/Portfolio/index.html" class="nav-link">Home</a>
+            <a href="/Portfolio/index.html#about" class="nav-link">About</a>
+            <a href="/Portfolio/index.html#projects" class="nav-link">Projects</a>
+            <a href="/Portfolio/index.html#contact" class="nav-link">Contact</a>
+            <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">
+                <span id="themeIcon">🌙</span>
+            </button>
         </div>
     </nav>
 
@@ -39,6 +41,45 @@
     </footer>
 
     <script>
+        // Theme toggle functionality
+        function initTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            
+            // Check saved preference or system preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            // Apply theme
+            applyTheme(initialTheme);
+            
+            // Toggle theme on button click
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                applyTheme(newTheme);
+            });
+        }
+        
+        function applyTheme(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (theme === 'dark') {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                themeIcon.textContent = '☀️';
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                themeIcon.textContent = '🌙';
+            }
+            
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Initialize theme on page load
+        initTheme();
+
         // Load blog posts from JSON
         fetch('../data/posts.json')
             .then(response => response.json())
