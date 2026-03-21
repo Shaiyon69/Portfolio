@@ -900,3 +900,20 @@ body.light-mode::before {
         gap: 0.5rem;
     }
 }
+/* ===== Accessibility & UX Enhancements ===== */
+html {
+    scroll-behavior: smooth;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+
+.theme-toggle:focus-visible,
+.btn:focus-visible,
+.nav-link:focus-visible,
+.read-more:focus-visible {
+    outline-color: var(--accent-primary);
+}
