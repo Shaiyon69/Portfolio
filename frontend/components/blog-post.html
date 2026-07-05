@@ -12,55 +12,11 @@
             padding: 2rem;
         }
 
-        .blog-post-full h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #ffffff;
-        }
-
-        .blog-post-full .post-meta {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            font-size: 0.95rem;
-        }
-
-        .blog-post-full .post-meta span {
-            color: #6D8597;
-        }
-
-        .blog-post-full .post-content {
-            color: #ffffff;
-            line-height: 1.8;
-            font-size: 1.1rem;
-            margin: 2rem 0;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .blog-post-full .post-content p {
-            margin-bottom: 1.5rem;
-        }
-
-        .blog-post-full .post-tags {
-            display: flex;
-            gap: 0.75rem;
-            margin: 2rem 0;
-            flex-wrap: wrap;
-        }
-
         .back-link {
             display: inline-flex;
             align-items: center;
-            color: #6D8597;
             text-decoration: none;
             margin-bottom: 2rem;
-            transition: color 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: #ffffff;
         }
 
         .back-link::before {
@@ -72,11 +28,6 @@
         .post-not-found {
             text-align: center;
             padding: 4rem 2rem;
-            color: #808080;
-        }
-
-        .post-not-found h2 {
-            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -84,11 +35,12 @@
     <nav class="nav">
         <div class="nav-logo">SHA</div>
         <div class="nav-links">
-            <a href="/Portfolio/index.html" class="nav-link">Home</a>
-            <a href="/Portfolio/index.html#about" class="nav-link">About</a>
-            <a href="/Portfolio/index.html#projects" class="nav-link">Projects</a>
-            <a href="devlogs.html" class="nav-link">Dev Logs</a>
-            <a href="/Portfolio/index.html#contact" class="nav-link">Contact</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+            <a href="../../index.html#about" class="nav-link">About</a>
+            <a href="../../index.html#projects" class="nav-link">Projects</a>
+            <a href="../../index.html#game" class="nav-link">Game</a>
+            <a href="devlogs.html" class="nav-link is-active" aria-current="page" data-nav-item="devlogs">Dev Logs</a>
+            <a href="../../index.html#contact" class="nav-link">Contact</a>
             <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode" aria-label="Toggle dark/light mode">
                 <span id="themeIcon">🌙</span>
             </button>
@@ -104,105 +56,148 @@
         </div>
     </main>
 
-    <footer style="text-align: center; padding: 2rem; color: #6D8597; border-top: 1px solid #2a2a2a; margin-top: 4rem;">
+    <footer class="footer blog-post-footer">
         <p>&copy; 2026 Shaiyon. All rights reserved.</p>
     </footer>
 
     <script>
-        // Theme toggle functionality
         function initTheme() {
             const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            if (!themeToggle || !themeIcon) return;
             
-            // Check saved preference or system preference
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+            applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
             
-            // Apply theme
-            applyTheme(initialTheme);
-            
-            // Toggle theme on button click
             themeToggle.addEventListener('click', () => {
                 const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                applyTheme(newTheme);
+                applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
             });
         }
         
         function applyTheme(theme) {
             const themeIcon = document.getElementById('themeIcon');
-            
-            if (theme === 'dark') {
-                document.body.classList.remove('light-mode');
-                document.body.classList.add('dark-mode');
-                themeIcon.textContent = '☀️';
-            } else {
-                document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
-                themeIcon.textContent = '🌙';
-            }
-            
+            document.body.classList.toggle('dark-mode', theme === 'dark');
+            document.body.classList.toggle('light-mode', theme !== 'dark');
+            if (themeIcon) themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
             localStorage.setItem('theme', theme);
         }
         
-        // Initialize theme on page load
         initTheme();
 
-        // Get post ID from URL parameter
+        const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[char]));
+
+        const formatDate = (value) => new Intl.DateTimeFormat('en', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        }).format(new Date(value));
+
+        const renderNotFound = (title = 'Post not found') => {
+            document.getElementById('postContainer').innerHTML = `
+                <div class="post-not-found">
+                    <h2>${escapeHtml(title)}</h2>
+                    <p><a href="devlogs.html" class="back-link">Back to Dev Logs</a></p>
+                </div>
+            `;
+        };
+
+        const renderManualLog = (log) => {
+            document.title = `${log.title} - Dev Log`;
+            document.getElementById('postContainer').innerHTML = `
+                <a href="devlogs.html" class="back-link">Back to Dev Logs</a>
+                <article class="reveal-card">
+                    <h2>${escapeHtml(log.title)}</h2>
+                    <div class="post-meta">
+                        <span class="post-date">${escapeHtml(formatDate(log.date))}</span>
+                        <span class="post-author">${escapeHtml(log.project)}</span>
+                    </div>
+                    <div class="post-tags">
+                        ${(log.tags || []).map((tag) => `<span class="blog-tag">${escapeHtml(tag)}</span>`).join('')}
+                    </div>
+                    <p class="post-summary">${escapeHtml(log.description || '')}</p>
+                    <div class="post-content">${escapeHtml(log.body || log.description || '')}</div>
+                    ${(log.whatChanged || []).length ? `
+                        <section class="post-section">
+                            <h3>What changed</h3>
+                            <ul>
+                                ${log.whatChanged.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
+                            </ul>
+                        </section>
+                    ` : ''}
+                    ${(log.technicalNotes || []).length ? `
+                        <section class="post-section">
+                            <h3>Technical notes</h3>
+                            <ul>
+                                ${log.technicalNotes.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
+                            </ul>
+                        </section>
+                    ` : ''}
+                    ${(log.comments || log.notes) ? `
+                        <aside class="post-notes">
+                            <strong>Comments / notes</strong>
+                            <p>${escapeHtml(log.comments || log.notes)}</p>
+                        </aside>
+                    ` : ''}
+                    ${(log.links || []).length ? `
+                        <div class="devlog-links">
+                            ${log.links.map((link) => `<a href="${escapeHtml(link.url)}" target="${String(link.url).startsWith('http') ? '_blank' : '_self'}" rel="noopener noreferrer">${escapeHtml(link.label)}</a>`).join('')}
+                        </div>
+                    ` : ''}
+                </article>
+            `;
+        };
+
+        const renderLegacyPost = (post) => {
+            document.title = `${post.title} - Portfolio`;
+            document.getElementById('postContainer').innerHTML = `
+                <a href="devlogs.html" class="back-link">Back to Dev Logs</a>
+                <article class="reveal-card">
+                    <h2>${escapeHtml(post.title)}</h2>
+                    <div class="post-meta">
+                        <span class="post-date">${escapeHtml(post.date)}</span>
+                        <span class="post-author">By ${escapeHtml(post.author)}</span>
+                        <span class="post-reading-time">${escapeHtml(post.readingTime)}</span>
+                    </div>
+                    <div class="post-tags">
+                        ${(post.tags || []).map((tag) => `<span class="blog-tag">${escapeHtml(tag)}</span>`).join('')}
+                    </div>
+                    <div class="post-content">${escapeHtml(post.content)}</div>
+                </article>
+            `;
+        };
+
         const urlParams = new URLSearchParams(window.location.search);
-        const postId = parseInt(urlParams.get('id'));
+        const postId = urlParams.get('id');
 
         if (postId) {
-            // Fetch blog posts
-            fetch('../data/posts.json')
-                .then(response => response.json())
-                .then(data => {
-                    // Find the post with matching ID
-                    const post = data.posts.find(p => p.id === postId);
-                    
-                    const postContainer = document.getElementById('postContainer');
-                    
-                    if (post) {
-                        // Update page title
-                        document.title = `${post.title} - Portfolio`;
-                        
-                        // Render full post
-                        postContainer.innerHTML = `
-                            <a href="devlogs.html" class="back-link">Back to Dev Logs</a>
-                            <article>
-                                <h2>${post.title}</h2>
-                                <div class="post-meta">
-                                    <span class="post-date">📅 ${post.date}</span>
-                                    <span class="post-author">✍️ By ${post.author}</span>
-                                    <span class="post-reading-time">⏱️ ${post.readingTime}</span>
-                                </div>
-                                <div class="post-tags">
-                                    ${post.tags.map(tag => `<span class="blog-tag">${tag}</span>`).join('')}
-                                </div>
-                                <div class="post-content">${post.content}</div>
-                            </article>
-                        `;
-                    } else {
-                        postContainer.innerHTML = `
-                            <div class="post-not-found">
-                                <h2>Post not found</h2>
-                                <p><a href="devlogs.html" class="back-link">Back to Dev Logs</a></p>
-                            </div>
-                        `;
-                    }
+            Promise.all([
+                fetch('../data/manual-devlogs.json').then((response) => response.json()),
+                fetch('../data/posts.json').then((response) => response.json())
+            ])
+                .then(([manualData, legacyData]) => {
+                    const manualLog = (manualData.logs || []).find((log) => String(log.id) === String(postId));
+                    const legacyPost = (legacyData.posts || []).find((post) => String(post.id) === String(postId));
+
+                    if (manualLog) renderManualLog(manualLog);
+                    else if (legacyPost) renderLegacyPost(legacyPost);
+                    else renderNotFound();
                 })
                 .catch(error => {
                     console.error('Error loading post:', error);
-                    document.getElementById('postContainer').innerHTML = `
-                        <div class="post-not-found">
-                            <h2>Error loading post</h2>
-                            <p><a href="devlogs.html" class="back-link">Back to Dev Logs</a></p>
-                        </div>
-                    `;
+                    renderNotFound('Error loading post');
                 });
+        } else {
+            renderNotFound();
         }
 
-        // Smooth scroll for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
