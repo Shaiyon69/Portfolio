@@ -145,13 +145,40 @@
                             </div>
                         ` : ''}
                         <div class="button-container project-actions">
-                            <a href="${escapeHtml(githubUrl)}" class="btn" target="_blank" rel="noopener noreferrer">GitHub</a>
-                            ${project.liveUrl ? `<a href="${escapeHtml(project.liveUrl)}" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">Live</a>` : ''}
+                            <a href="${escapeHtml(githubUrl)}" class="btn" target="_blank" rel="noopener noreferrer">
+                                GitHub
+                            </a>
+
+                            ${project.liveUrl ? `
+                                <a
+                                    href="${project.liveUrl.startsWith('scroll:') ? '#' : escapeHtml(project.liveUrl)}"
+                                    class="btn btn-ghost project-live-btn"
+                                    ${project.liveUrl.startsWith('scroll:')
+                                        ? `data-scroll="${escapeHtml(project.liveUrl.replace('scroll:', ''))}"`
+                                        : `target="_blank" rel="noopener noreferrer"`}
+                                >
+                                    Live
+                                </a>
+                            ` : ''}
                         </div>
                     </div>
                 </article>
             `;
         }).join('');
+        document.querySelectorAll('.project-live-btn[data-scroll]').forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const target = document.querySelector(button.dataset.scroll);
+
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
     };
 
     const renderRecentActivity = () => {
