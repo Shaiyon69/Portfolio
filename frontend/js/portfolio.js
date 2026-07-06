@@ -11,6 +11,22 @@
         activeFilter: 'All'
     };
 
+    if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+    }
+
+    const resetInitialScroll = () => {
+        if (!window.location.hash) {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'auto'
+            });
+        }
+    };
+
+    resetInitialScroll();
+
     const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, (char) => ({
         '&': '&amp;',
         '<': '&lt;',
@@ -151,7 +167,7 @@
 
                             ${project.liveUrl ? `
                                 <a
-                                    href="${project.liveUrl.startsWith('scroll:') ? '#' : escapeHtml(project.liveUrl)}"
+                                    href="${project.liveUrl.startsWith('scroll:') ? escapeHtml(project.liveUrl.replace('scroll:', '')) : escapeHtml(project.liveUrl)}"
                                     class="btn btn-ghost project-live-btn"
                                     ${project.liveUrl.startsWith('scroll:')
                                         ? `data-scroll="${escapeHtml(project.liveUrl.replace('scroll:', ''))}"`
@@ -166,20 +182,29 @@
             `;
         }).join('');
         document.querySelectorAll('.project-live-btn[data-scroll]').forEach((button) => {
-        button.addEventListener('click', (event) => {
-            event.preventDefault();
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
 
-            const target = document.querySelector(button.dataset.scroll);
+                const target = document.querySelector(button.dataset.scroll);
 
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    window.history.pushState(null, '', button.getAttribute('href'));
+                }
+            });
+        });
+    };
+
+    window.addEventListener('pageshow', resetInitialScroll);
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            resetInitialScroll();
+            requestAnimationFrame(resetInitialScroll);
         });
     });
-    };
 
     const renderRecentActivity = () => {
         const container = document.getElementById('recentActivityContainer');
