@@ -24,6 +24,33 @@
         return response.json();
     };
 
+    const repeatMarkup = (count, callback) => Array.from({ length: count }, (_, index) => callback(index)).join('');
+
+    const setBusy = (element, isBusy) => {
+        if (!element) return;
+        if (isBusy) element.setAttribute('aria-busy', 'true');
+        else element.removeAttribute('aria-busy');
+    };
+
+    const renderDevlogSkeletons = () => repeatMarkup(3, () => `
+        <article class="skeleton-devlog" aria-hidden="true">
+            <span class="skeleton-line title"></span>
+            <span class="skeleton-line medium"></span>
+            <span class="skeleton-line long"></span>
+            <span class="skeleton-line long"></span>
+            <span class="skeleton-line medium"></span>
+            <div class="skeleton-pill-row">
+                <span class="skeleton-pill"></span>
+                <span class="skeleton-pill"></span>
+                <span class="skeleton-pill"></span>
+            </div>
+            <div class="skeleton-button-row">
+                <span class="skeleton-button"></span>
+                <span class="skeleton-button"></span>
+            </div>
+        </article>
+    `);
+
     const formatDate = (value) => new Intl.DateTimeFormat('en', {
         month: 'short',
         day: 'numeric',
@@ -106,10 +133,12 @@
         if (count) count.textContent = `${logs.length} log${logs.length === 1 ? '' : 's'}`;
 
         if (!logs.length) {
+            setBusy(container, false);
             container.innerHTML = '<div class="empty-state">No dev logs match your search yet.</div>';
             return;
         }
 
+        setBusy(container, false);
         container.innerHTML = logs.map((log) => `
             <article class="devlog-entry reveal-card">
                 <div class="devlog-header">
@@ -294,7 +323,8 @@
         const container = document.getElementById('postsContainer');
         if (!container) return;
 
-        container.innerHTML = '<div class="loading-state">Loading dev logs...</div>';
+        setBusy(container, true);
+        container.innerHTML = renderDevlogSkeletons();
         initInteractions();
         renderFilters();
 

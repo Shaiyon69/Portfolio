@@ -23,6 +23,8 @@
     --section-gradient: linear-gradient(135deg, rgba(143, 182, 209, 0.08) 0%, rgba(0, 0, 0, 1) 100%);
     --footer-bg: #000000;
     --focus-ring: rgba(143, 182, 209, 0.55);
+    --skeleton-base: rgba(143, 182, 209, 0.1);
+    --skeleton-highlight: rgba(247, 251, 255, 0.18);
 }
 
 @media (prefers-color-scheme: light) {
@@ -51,6 +53,8 @@
         --section-gradient: linear-gradient(135deg, rgba(73, 111, 138, 0.09) 0%, rgba(247, 250, 252, 1) 100%);
         --footer-bg: #eef4f8;
         --focus-ring: rgba(47, 127, 172, 0.45);
+        --skeleton-base: rgba(73, 111, 138, 0.1);
+        --skeleton-highlight: rgba(255, 255, 255, 0.82);
     }
 }
 
@@ -91,6 +95,8 @@ body.light-mode {
     --section-gradient: linear-gradient(135deg, rgba(73, 111, 138, 0.09) 0%, rgba(247, 250, 252, 1) 100%);
     --footer-bg: #eef4f8;
     --focus-ring: rgba(47, 127, 172, 0.45);
+    --skeleton-base: rgba(73, 111, 138, 0.1);
+    --skeleton-highlight: rgba(255, 255, 255, 0.82);
 }
 
 body.dark-mode {
@@ -118,6 +124,8 @@ body.dark-mode {
     --section-gradient: linear-gradient(135deg, rgba(143, 182, 209, 0.08) 0%, rgba(0, 0, 0, 1) 100%);
     --footer-bg: #000000;
     --focus-ring: rgba(143, 182, 209, 0.55);
+    --skeleton-base: rgba(143, 182, 209, 0.1);
+    --skeleton-highlight: rgba(247, 251, 255, 0.18);
 }
 
 body::before {
@@ -1070,6 +1078,144 @@ body.light-mode::before {
     border: 1px solid rgba(109, 133, 151, 0.16);
 }
 
+.skeleton-group {
+    display: contents;
+}
+
+.skeleton-card,
+.skeleton-activity,
+.skeleton-post,
+.skeleton-devlog,
+.skeleton-article {
+    position: relative;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.skeleton-card,
+.skeleton-post,
+.skeleton-devlog,
+.skeleton-article {
+    background: var(--surface-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+.skeleton-card {
+    min-height: 620px;
+}
+
+.skeleton-post {
+    min-height: 360px;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.skeleton-devlog {
+    min-height: 420px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.skeleton-article {
+    padding: 2.5rem;
+}
+
+.skeleton-media,
+.skeleton-line,
+.skeleton-pill,
+.skeleton-button {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    background: var(--skeleton-base);
+}
+
+.skeleton-card::after,
+.skeleton-activity::after,
+.skeleton-post::after,
+.skeleton-devlog::after,
+.skeleton-article::after,
+.skeleton-media::after,
+.skeleton-line::after,
+.skeleton-pill::after,
+.skeleton-button::after,
+.game-frame-skeleton::after {
+    animation: skeletonSweep 1.35s ease-in-out infinite;
+    background: linear-gradient(90deg, transparent, var(--skeleton-highlight), transparent);
+    content: "";
+    inset: 0;
+    position: absolute;
+    transform: translateX(-100%);
+}
+
+.skeleton-media {
+    height: 220px;
+}
+
+.skeleton-content {
+    padding: 1.5rem;
+}
+
+.skeleton-line {
+    height: 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+.skeleton-line.short {
+    width: 42%;
+}
+
+.skeleton-line.medium {
+    width: 66%;
+}
+
+.skeleton-line.long {
+    width: 88%;
+}
+
+.skeleton-line.title {
+    height: 1.4rem;
+    width: 58%;
+    margin-bottom: 1.2rem;
+}
+
+.skeleton-pill-row,
+.skeleton-button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+.skeleton-pill {
+    height: 2rem;
+    width: 5.5rem;
+}
+
+.skeleton-button {
+    height: 2.75rem;
+    width: 6.25rem;
+}
+
+.skeleton-activity {
+    min-height: 110px;
+    padding: 1.2rem;
+    background: var(--surface-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+.skeleton-article .back-link {
+    visibility: hidden;
+}
+
+@keyframes skeletonSweep {
+    to {
+        transform: translateX(100%);
+    }
+}
+
 .reveal-card {
     animation: cardReveal 0.45s ease both;
 }
@@ -1468,12 +1614,39 @@ body.light-mode::before {
     border: 1px solid var(--border-color);
 }
 
+.game-frame-skeleton {
+    align-items: center;
+    background: var(--skeleton-base);
+    color: var(--text-muted);
+    display: flex;
+    font-weight: 700;
+    inset: 0;
+    justify-content: center;
+    letter-spacing: 0.08em;
+    overflow: hidden;
+    position: absolute;
+    text-transform: uppercase;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    z-index: 1;
+}
+
+.game-frame-wrap.is-loaded .game-frame-skeleton {
+    opacity: 0;
+    visibility: hidden;
+}
+
 .game-frame {
     display: block;
     width: 100%;
     height: 100%;
     border: 0;
     background: #000000;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.game-frame-wrap.is-loaded .game-frame {
+    opacity: 1;
 }
 
 /* ===== Recent Dev Logs Styles ===== */
@@ -1813,5 +1986,19 @@ html {
         animation-iteration-count: 1 !important;
         scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
+    }
+
+    .skeleton-card::after,
+    .skeleton-activity::after,
+    .skeleton-post::after,
+    .skeleton-devlog::after,
+    .skeleton-article::after,
+    .skeleton-media::after,
+    .skeleton-line::after,
+    .skeleton-pill::after,
+    .skeleton-button::after,
+    .game-frame-skeleton::after {
+        animation: none !important;
+        transform: none;
     }
 }

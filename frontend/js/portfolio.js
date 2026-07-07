@@ -71,6 +71,58 @@
         return response.json();
     };
 
+    const repeatMarkup = (count, callback) => Array.from({ length: count }, (_, index) => callback(index)).join('');
+
+    const setBusy = (element, isBusy) => {
+        if (!element) return;
+        if (isBusy) element.setAttribute('aria-busy', 'true');
+        else element.removeAttribute('aria-busy');
+    };
+
+    const renderProjectSkeletons = () => repeatMarkup(3, () => `
+        <article class="project-card skeleton-card" aria-hidden="true">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-content">
+                <span class="skeleton-line title"></span>
+                <span class="skeleton-line long"></span>
+                <span class="skeleton-line medium"></span>
+                <div class="skeleton-pill-row">
+                    <span class="skeleton-pill"></span>
+                    <span class="skeleton-pill"></span>
+                    <span class="skeleton-pill"></span>
+                </div>
+                <span class="skeleton-line long"></span>
+                <span class="skeleton-line medium"></span>
+                <div class="skeleton-button-row">
+                    <span class="skeleton-button"></span>
+                    <span class="skeleton-button"></span>
+                </div>
+            </div>
+        </article>
+    `);
+
+    const renderActivitySkeletons = () => repeatMarkup(4, () => `
+        <div class="skeleton-activity" aria-hidden="true">
+            <span class="skeleton-line short"></span>
+            <span class="skeleton-line long"></span>
+            <span class="skeleton-line medium"></span>
+        </div>
+    `);
+
+    const renderRecentPostSkeletons = () => repeatMarkup(4, () => `
+        <article class="skeleton-post" aria-hidden="true">
+            <span class="skeleton-line title"></span>
+            <span class="skeleton-line medium"></span>
+            <span class="skeleton-line long"></span>
+            <span class="skeleton-line long"></span>
+            <div class="skeleton-pill-row">
+                <span class="skeleton-pill"></span>
+                <span class="skeleton-pill"></span>
+            </div>
+            <span class="skeleton-button"></span>
+        </article>
+    `);
+
     const renderProjectFilters = () => {
         const filterContainer = document.getElementById('projectFilters');
         if (!filterContainer) return;
@@ -108,10 +160,12 @@
         const visibleProjects = state.projects.filter(projectMatchesFilter);
 
         if (!visibleProjects.length) {
+            setBusy(container, false);
             container.innerHTML = '<div class="empty-state">No projects match this filter yet.</div>';
             return;
         }
 
+        setBusy(container, false);
         container.innerHTML = visibleProjects.map((project) => {
             const repo = state.repoMeta.get(project.repo);
             const latestCommit = state.latestCommits.get(project.repo);
@@ -217,9 +271,11 @@
 
         if (!commits.length) {
             container.innerHTML = '<div class="empty-state">Recent activity will appear after GitHub responds.</div>';
+            setBusy(container, false);
             return;
         }
 
+        setBusy(container, false);
         container.innerHTML = commits.map((commit) => `
             <a href="${escapeHtml(commit.url)}" class="activity-item" target="_blank" rel="noopener noreferrer">
                 <span>${escapeHtml(commit.repo)}</span>
@@ -256,23 +312,29 @@
 
     const initProjects = async () => {
         const container = document.getElementById('projectContainer');
+        const activityContainer = document.getElementById('recentActivityContainer');
         if (!container) return;
 
-        container.innerHTML = '<div class="loading-state">Loading GitHub projects...</div>';
+        setBusy(container, true);
+        setBusy(activityContainer, true);
+        container.innerHTML = renderProjectSkeletons();
+        if (activityContainer) activityContainer.innerHTML = renderActivitySkeletons();
 
         try {
             const data = await fetchJson(projectDataUrl);
             state.projects = data.projects || [];
             renderProjectFilters();
             renderProjects();
-            renderRecentActivity();
             await loadGitHubData(data);
             renderProjectFilters();
             renderProjects();
             renderRecentActivity();
         } catch (error) {
             console.error('Unable to load project data:', error);
+            setBusy(container, false);
+            setBusy(activityContainer, false);
             container.innerHTML = '<div class="empty-state">Unable to load projects right now.</div>';
+            if (activityContainer) activityContainer.innerHTML = '<div class="empty-state">Recent activity is unavailable right now.</div>';
         }
     };
 
@@ -303,6 +365,9 @@
         const container = document.getElementById('recentPostsContainer');
         if (!container) return;
 
+        setBusy(container, true);
+        container.innerHTML = renderRecentPostSkeletons();
+
         try {
             const data = await fetchJson(manualLogsUrl);
             const posts = (data.logs || [])
@@ -311,10 +376,12 @@
                 .slice(0, 4);
 
             if (!posts.length) {
+                setBusy(container, false);
                 container.innerHTML = '<div class="empty-state">No dev logs yet. Check back soon.</div>';
                 return;
             }
 
+            setBusy(container, false);
             container.innerHTML = posts.map((post) => `
                 <article class="recent-post-card reveal-card">
                     <h3>${escapeHtml(post.title)}</h3>
@@ -336,12 +403,23 @@
             `).join('');
         } catch (error) {
             console.error('Error loading dev logs:', error);
+            setBusy(container, false);
             container.innerHTML = '<div class="empty-state">Unable to load dev logs.</div>';
         }
     };
 
+    const initGameFrameSkeleton = () => {
+        const frameWrap = document.querySelector('.game-frame-wrap');
+        const frame = document.querySelector('.game-frame');
+        if (!frameWrap || !frame) return;
+
+        const markLoaded = () => frameWrap.classList.add('is-loaded');
+        frame.addEventListener('load', markLoaded, { once: true });
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
         initTheme();
+        initGameFrameSkeleton();
         initProjects();
         initRecentPosts();
     });

@@ -10,7 +10,7 @@
 <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div class="nav-logo">SHA</div>
+        <div class="nav-logo">SHAIYON</div>
         <div class="nav-links">
             <a href="#about" class="nav-link">About</a>
             <a href="#projects" class="nav-link">Projects</a>
@@ -27,8 +27,8 @@
     <header id="about" class="hero">
 
         <img src="frontend/images/pao.jpg" alt="Profile Picture" class="hero-image">
-        <h1 class="hero-title">Hello, I'm Sha!</h1>
-        <p class="hero-text"><i>I'm a passionate student pursuing my academic journey in Information Technology.</i></p>
+        <h1 class="hero-title">Hello, I'm Shaiyon!</h1>
+        <p class="hero-text"><i>Skibidi</i></p>
         <br>
         <hr class="hero-divider">
     </header>
@@ -41,9 +41,81 @@
         <hr class="section-divider">
         
         <div class="section-toolbar" id="projectFilters" aria-label="Project filters"></div>
-        <div class="activity-strip" id="recentActivityContainer" aria-live="polite"></div>
-        <div class="project-container" id="projectContainer" aria-live="polite">
-            <div class="loading-state">Loading GitHub projects...</div>
+        <div class="activity-strip" id="recentActivityContainer" aria-live="polite" aria-busy="true">
+            <div class="skeleton-activity" aria-hidden="true">
+                <span class="skeleton-line short"></span>
+                <span class="skeleton-line long"></span>
+                <span class="skeleton-line medium"></span>
+            </div>
+            <div class="skeleton-activity" aria-hidden="true">
+                <span class="skeleton-line short"></span>
+                <span class="skeleton-line long"></span>
+                <span class="skeleton-line medium"></span>
+            </div>
+            <div class="skeleton-activity" aria-hidden="true">
+                <span class="skeleton-line short"></span>
+                <span class="skeleton-line long"></span>
+                <span class="skeleton-line medium"></span>
+            </div>
+        </div>
+        <div class="project-container" id="projectContainer" aria-live="polite" aria-busy="true">
+            <article class="project-card skeleton-card" aria-hidden="true">
+                <div class="skeleton-media"></div>
+                <div class="skeleton-content">
+                    <span class="skeleton-line title"></span>
+                    <span class="skeleton-line long"></span>
+                    <span class="skeleton-line medium"></span>
+                    <div class="skeleton-pill-row">
+                        <span class="skeleton-pill"></span>
+                        <span class="skeleton-pill"></span>
+                        <span class="skeleton-pill"></span>
+                    </div>
+                    <span class="skeleton-line long"></span>
+                    <span class="skeleton-line medium"></span>
+                    <div class="skeleton-button-row">
+                        <span class="skeleton-button"></span>
+                        <span class="skeleton-button"></span>
+                    </div>
+                </div>
+            </article>
+            <article class="project-card skeleton-card" aria-hidden="true">
+                <div class="skeleton-media"></div>
+                <div class="skeleton-content">
+                    <span class="skeleton-line title"></span>
+                    <span class="skeleton-line long"></span>
+                    <span class="skeleton-line medium"></span>
+                    <div class="skeleton-pill-row">
+                        <span class="skeleton-pill"></span>
+                        <span class="skeleton-pill"></span>
+                        <span class="skeleton-pill"></span>
+                    </div>
+                    <span class="skeleton-line long"></span>
+                    <span class="skeleton-line medium"></span>
+                    <div class="skeleton-button-row">
+                        <span class="skeleton-button"></span>
+                        <span class="skeleton-button"></span>
+                    </div>
+                </div>
+            </article>
+            <article class="project-card skeleton-card" aria-hidden="true">
+                <div class="skeleton-media"></div>
+                <div class="skeleton-content">
+                    <span class="skeleton-line title"></span>
+                    <span class="skeleton-line long"></span>
+                    <span class="skeleton-line medium"></span>
+                    <div class="skeleton-pill-row">
+                        <span class="skeleton-pill"></span>
+                        <span class="skeleton-pill"></span>
+                        <span class="skeleton-pill"></span>
+                    </div>
+                    <span class="skeleton-line long"></span>
+                    <span class="skeleton-line medium"></span>
+                    <div class="skeleton-button-row">
+                        <span class="skeleton-button"></span>
+                        <span class="skeleton-button"></span>
+                    </div>
+                </div>
+            </article>
         </div>
     </section>
 
@@ -58,6 +130,7 @@
                 <a href="webvallaria/Convallaria.html" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">Open Fullscreen</a>
             </div>
             <div class="game-frame-wrap">
+                <div class="game-frame-skeleton" aria-hidden="true">Loading game</div>
                 <iframe
                     class="game-frame"
                     src="webvallaria/Convallaria.html"
@@ -77,7 +150,30 @@
             <p class="section-subtitle">Latest updates from my development journey</p>
             <hr class="section-divider">
             
-            <div id="recentPostsContainer" class="recent-posts-container" aria-live="polite"></div>
+            <div id="recentPostsContainer" class="recent-posts-container" aria-live="polite" aria-busy="true">
+                <article class="skeleton-post" aria-hidden="true">
+                    <span class="skeleton-line title"></span>
+                    <span class="skeleton-line medium"></span>
+                    <span class="skeleton-line long"></span>
+                    <span class="skeleton-line long"></span>
+                    <div class="skeleton-pill-row">
+                        <span class="skeleton-pill"></span>
+                        <span class="skeleton-pill"></span>
+                    </div>
+                    <span class="skeleton-button"></span>
+                </article>
+                <article class="skeleton-post" aria-hidden="true">
+                    <span class="skeleton-line title"></span>
+                    <span class="skeleton-line medium"></span>
+                    <span class="skeleton-line long"></span>
+                    <span class="skeleton-line long"></span>
+                    <div class="skeleton-pill-row">
+                        <span class="skeleton-pill"></span>
+                        <span class="skeleton-pill"></span>
+                    </div>
+                    <span class="skeleton-button"></span>
+                </article>
+            </div>
             
             <div class="center-action">
                 <a href="frontend/components/devlogs.html" class="btn">View All Dev Logs</a>

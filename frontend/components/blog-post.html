@@ -49,9 +49,18 @@
 
     <main>
         <div class="blog-post-full" id="postContainer">
-            <div class="post-not-found">
-                <h2>Post not found</h2>
-                <p><a href="devlogs.html" class="back-link">Back to Dev Logs</a></p>
+            <div class="skeleton-article" aria-hidden="true">
+                <span class="skeleton-line title"></span>
+                <span class="skeleton-line medium"></span>
+                <div class="skeleton-pill-row">
+                    <span class="skeleton-pill"></span>
+                    <span class="skeleton-pill"></span>
+                    <span class="skeleton-pill"></span>
+                </div>
+                <span class="skeleton-line long"></span>
+                <span class="skeleton-line long"></span>
+                <span class="skeleton-line medium"></span>
+                <span class="skeleton-line long"></span>
             </div>
         </div>
     </main>
@@ -101,7 +110,9 @@
         }).format(new Date(value));
 
         const renderNotFound = (title = 'Post not found') => {
-            document.getElementById('postContainer').innerHTML = `
+            const container = document.getElementById('postContainer');
+            container.removeAttribute('aria-busy');
+            container.innerHTML = `
                 <div class="post-not-found">
                     <h2>${escapeHtml(title)}</h2>
                     <p><a href="devlogs.html" class="back-link">Back to Dev Logs</a></p>
@@ -111,7 +122,9 @@
 
         const renderManualLog = (log) => {
             document.title = `${log.title} - Dev Log`;
-            document.getElementById('postContainer').innerHTML = `
+            const container = document.getElementById('postContainer');
+            container.removeAttribute('aria-busy');
+            container.innerHTML = `
                 <a href="devlogs.html" class="back-link">Back to Dev Logs</a>
                 <article class="reveal-card">
                     <h2>${escapeHtml(log.title)}</h2>
@@ -157,7 +170,9 @@
 
         const renderLegacyPost = (post) => {
             document.title = `${post.title} - Portfolio`;
-            document.getElementById('postContainer').innerHTML = `
+            const container = document.getElementById('postContainer');
+            container.removeAttribute('aria-busy');
+            container.innerHTML = `
                 <a href="devlogs.html" class="back-link">Back to Dev Logs</a>
                 <article class="reveal-card">
                     <h2>${escapeHtml(post.title)}</h2>
@@ -176,6 +191,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
+        document.getElementById('postContainer').setAttribute('aria-busy', 'true');
 
         if (postId) {
             Promise.all([
