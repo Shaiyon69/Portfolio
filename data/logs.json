@@ -21,11 +21,11 @@
       "links": [
         {
           "label": "Read full post",
-          "url": "blog-post.html?id=1"
+          "url": "/scrappbook/?post=1"
         },
         {
           "label": "GitHub",
-          "url": "https://github.com/Shaiyon69/LOTV_PROJECT_CONVALLARIA"
+          "url": "https://github.com/Shaiyon69/Project_Convallaria"
         }
       ]
     },
@@ -50,7 +50,7 @@
       "links": [
         {
           "label": "Repository",
-          "url": "https://github.com/Shaiyon69/Portfolio"
+          "url": "https://github.com/Shaiyon69/shaiyon69.github.io"
         }
       ]
     },
