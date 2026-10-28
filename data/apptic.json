@@ -5,7 +5,7 @@
       "name": "Purrch",
       "tagline": "A cat that lives in your notch.",
       "description": "Water reminders, a focus timer, to-dos, music with lyrics and a file shelf, all tucked into a little pill at the top of your screen. Runs locally; the only network call is the lyrics lookup.",
-      "icon": "/assets/img/apps/purrch.png",
+      "icon": "/Skibidevs/assets/img/apps/purrch.png",
       "repo": "Shaiyon69/purrch",
       "assets": { "windows": "Setup\\.exe$", "linux": "\\.AppImage$" },
       "featured": true
@@ -14,17 +14,12 @@
       "id": "messapp",
       "name": "Messapp",
       "tagline": "Chat, calls and servers for the group.",
-      "description": "Realtime messaging with encrypted DMs, voice and video calls, servers and media. Use it in the browser today; desktop and Android builds are on the way.",
-      "icon": "/assets/img/apps/messapp.png",
+      "description": "Realtime messaging with encrypted DMs, voice and video calls, servers and media. Use it in the browser, or install it on Windows or Android.",
+      "icon": "/Skibidevs/assets/img/apps/messapp.png",
       "web": "https://messapp-tau.vercel.app",
-      "featured": true
-    },
-    {
-      "id": "chimaera",
-      "name": "Chimaera",
-      "tagline": "A game launcher with friends built in.",
-      "description": "Library, downloads, cloud save backups to Google Drive and a Friends tab that talks to Messapp.",
-      "icon": "/assets/img/apps/chimaera.png",
+      "repo": "Shaiyon69/apptic-releases",
+      "tagPrefix": "messapp-",
+      "assets": { "windows": "^messapp_.*_x64-setup\\.exe$", "android": "^messapp.*\\.apk$" },
       "featured": true
     },
     {
@@ -32,8 +27,19 @@
       "name": "Convallaria",
       "tagline": "A cozy farming RPG where death enriches the soil.",
       "description": "Farm, fight and die: each death advances the world a day and leaves something behind for the next character. A prototype that runs in your browser.",
-      "icon": "/assets/img/apps/convallaria.png",
-      "play": "/playroom/",
+      "icon": "/Skibidevs/assets/img/apps/convallaria.png",
+      "play": "/Skibidevs/playroom/",
+      "featured": true
+    },
+    {
+      "id": "chimaera",
+      "name": "Chimaera",
+      "tagline": "A game launcher with friends built in.",
+      "description": "Library, downloads, cloud save backups to Google Drive and a Friends tab that talks to Messapp.",
+      "icon": "/Skibidevs/assets/img/apps/chimaera.png",
+      "repo": "Shaiyon69/apptic-releases",
+      "tagPrefix": "chimaera-",
+      "assets": { "windows": "^chimaera-.*-setup\\.exe$" },
       "featured": true
     },
     {

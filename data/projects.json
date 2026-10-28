@@ -24,7 +24,7 @@
       "relatedDevLogs": [
         "messapp-mobile-polish"
       ],
-      "image": "/assets/img/apps/messapp.png",
+      "image": "/Skibidevs/assets/img/apps/messapp.png",
       "liveUrl": "https://messapp-tau.vercel.app",
       "apptic": "messapp"
     },
@@ -49,9 +49,9 @@
       "relatedDevLogs": [
         "convallaria-design"
       ],
-      "image": "/webvallaria/Convallaria.png",
+      "image": "/Skibidevs/webvallaria/Convallaria.png",
       "githubUrl": "https://github.com/Shaiyon69/Project_Convallaria",
-      "liveUrl": "/playroom/",
+      "liveUrl": "/Skibidevs/playroom/",
       "apptic": "convallaria"
     },
     {
@@ -133,7 +133,7 @@
         "PHP",
         "MySQL"
       ],
-      "image": "/assets/img/task.svg"
+      "image": "/Skibidevs/assets/img/task.svg"
     }
   ]
 }

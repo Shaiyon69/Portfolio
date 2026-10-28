@@ -28,14 +28,19 @@ window.SD = (function () {
     };
 
     // Unauthenticated GitHub API allows 60 requests/hour per visitor, so cache each release for an hour.
-    const latestRelease = async (repo) => {
-        const key = `release:${repo}`;
+    // Apps sharing one repo (apptic-releases) tag releases "<app>-v1.2.3"; their newest matching release wins.
+    const latestRelease = async (repo, tagPrefix = '') => {
+        const key = `release:${repo}:${tagPrefix}`;
         const cached = store.get(key);
         if (cached && Date.now() - cached.at < RELEASE_TTL) return cached.release;
 
-        const data = await fetchJson(`https://api.github.com/repos/${repo}/releases/latest`);
+        const data = tagPrefix
+            ? (await fetchJson(`https://api.github.com/repos/${repo}/releases?per_page=50`))
+                .find((item) => !item.draft && !item.prerelease && item.tag_name.startsWith(tagPrefix))
+            : await fetchJson(`https://api.github.com/repos/${repo}/releases/latest`);
+        if (!data) throw new Error(`No ${tagPrefix} release in ${repo}`);
         const release = {
-            tag: data.tag_name,
+            tag: data.tag_name.slice(tagPrefix.length),
             date: data.published_at,
             notes: data.body || '',
             url: data.html_url,
@@ -72,16 +77,18 @@ window.SD = (function () {
         ? `<img class="app-icon ${size}" src="${esc(app.icon)}" alt="" loading="lazy" width="64" height="64">`
         : `<span class="app-icon app-icon-mono ${size}" aria-hidden="true">${esc(app.name.charAt(0))}</span>`;
 
-    const appUrl = (app) => `/apptic/?app=${encodeURIComponent(app.id)}`;
+    const appUrl = (app) => `/Skibidevs/apptic/?app=${encodeURIComponent(app.id)}`;
 
     const appCard = (app) => {
-        let action = '<span class="btn btn-sm" aria-disabled="true">Coming soon</span>';
-        if (app.repo) action = `<a class="btn btn-sm" href="${esc(appUrl(app))}" data-get="${esc(app.id)}">Get</a>`;
+        // Downloads always go through the app page, which explains unsigned installers first.
+        let action = '<span class="later">coming soon</span>';
+        if (app.repo) action = `<a class="btn btn-sm" href="${esc(appUrl(app))}">Get</a>`;
         else if (app.play) action = `<a class="btn btn-sm" href="${esc(app.play)}">Play</a>`;
         else if (app.web) action = `<a class="btn btn-sm" href="${esc(app.web)}" rel="noopener">Open</a>`;
+        const ready = app.repo || app.play || app.web;
 
         return `
-            <article class="card app-card">
+            <article class="card app-card${ready ? '' : ' is-empty'}">
                 <div class="app-top">
                     ${appIcon(app)}
                     <div>
@@ -94,34 +101,28 @@ window.SD = (function () {
             </article>`;
     };
 
-    // Swap each card's "Get" link for the visitor's platform download once the release is known.
+    // Add the latest version to each card once its release is known.
     const hydrateCards = (apps) => {
-        const os = platform();
         apps.filter((app) => app.repo).forEach(async (app) => {
             try {
-                const release = await latestRelease(app.repo);
+                const release = await latestRelease(app.repo, app.tagPrefix);
                 const version = document.querySelector(`[data-version="${CSS.escape(app.id)}"]`);
                 if (version) version.textContent = `${release.tag} · ${platformsOf(app).join(' · ')}`;
-                const match = downloadsFor(app, release).find((item) => item.os === os);
-                const button = document.querySelector(`[data-get="${CSS.escape(app.id)}"]`);
-                if (button && match) {
-                    button.href = match.url;
-                    button.textContent = `Get for ${match.label}`;
-                } else if (button) {
-                    button.textContent = 'View';
-                }
             } catch (error) {
-                // Card keeps linking to the app page, which falls back to GitHub's releases page.
+                // Card keeps its platform list; the app page falls back to GitHub's releases page.
             }
         });
     };
 
     // Scrappbook has two sources: structured dev logs and the older long-form posts.
+    // Throws only when both fail, so a load failure never reads as "No posts yet".
     const loadPosts = async () => {
+        let failures = 0;
         const [logs, legacy] = await Promise.all([
-            fetchJson('/data/logs.json').catch(() => ({ logs: [] })),
-            fetchJson('/data/posts.json').catch(() => ({ posts: [] }))
+            fetchJson('/Skibidevs/data/logs.json').catch(() => { failures += 1; return { logs: [] }; }),
+            fetchJson('/Skibidevs/data/posts.json').catch(() => { failures += 1; return { posts: [] }; })
         ]);
+        if (failures === 2) throw new Error('Could not load the Scrappbook');
         return [
             ...(logs.logs || []).map((log) => ({ ...log, id: String(log.id), summary: log.description || log.body })),
             ...(legacy.posts || []).map((post) => ({
@@ -138,7 +139,7 @@ window.SD = (function () {
     };
 
     const postRow = (post) => `
-        <a class="card post-row" href="/scrappbook/?post=${encodeURIComponent(post.id)}">
+        <a class="card post-row" href="/Skibidevs/scrappbook/?post=${encodeURIComponent(post.id)}">
             <div class="post-meta">
                 <span>${esc(formatDate(post.date))}</span>
                 ${post.project ? `<span class="project">${esc(post.project)}</span>` : ''}
@@ -164,7 +165,9 @@ window.SD = (function () {
     const initNav = () => {
         const path = location.pathname;
         document.querySelectorAll('.tabs a').forEach((link) => {
-            if (path.startsWith(new URL(link.href).pathname)) link.setAttribute('aria-current', 'page');
+            if (!path.startsWith(new URL(link.href).pathname)) return;
+            link.setAttribute('aria-current', 'page');
+            link.insertAdjacentHTML('beforeend', '<svg class="pen" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 5 C 20 2, 40 7, 60 4 S 90 3, 99 5"/></svg>');
         });
     };
 

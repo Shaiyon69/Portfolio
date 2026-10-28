@@ -5,7 +5,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const list = document.getElementById('postList');
     const search = document.getElementById('postSearch');
 
-    const posts = await loadPosts();
+    let posts;
+    try {
+        posts = await loadPosts();
+    } catch (error) {
+        list.innerHTML = '<div class="empty">Couldn\'t load the Scrappbook. Refresh to try again.</div>';
+        return;
+    }
 
     const bullets = (title, items) => (items || []).length
         ? `<h2>${esc(title)}</h2><ul>${items.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>`
@@ -16,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         postView.hidden = false;
         document.title = `${post.title} · Scrappbook · Skibidevs`;
         postView.innerHTML = `
-            <a class="back" href="/scrappbook/">&larr; All posts</a>
+            <a class="back" href="/Skibidevs/scrappbook/">&larr; All posts</a>
             <div class="post-meta">
                 <span>${esc(formatDate(post.date))}</span>
                 ${post.project ? `<span class="project">${esc(post.project)}</span>` : ''}
@@ -46,6 +52,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (post) {
         renderPost(post);
     } else {
+        if (id) {
+            search.insertAdjacentHTML('beforebegin', `<div class="empty notice" role="status">There's no post called &ldquo;${esc(id)}&rdquo;. Here's everything in the Scrappbook.</div>`);
+        }
         search.addEventListener('input', renderList);
         renderList();
     }
